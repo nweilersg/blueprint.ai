@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 import streamlit as st
 from openai import OpenAI
 from io import BytesIO
@@ -11,24 +10,14 @@ import json
 import re
 
 
-# Function to convert markdown table to CSV
-def markdown_table_to_csv(markdown_table):
-	rows = markdown_table.strip().split('\n')
-	columns = [col.strip() for col in rows[0].split('|')[1:-1]]
-	data = []
-	for row in rows[2:]:
-		data.append([cell.strip() for cell in row.split('|')[1:-1]])
-	df = pd.DataFrame(data, columns=columns)
-	return df
-
-
 st.set_page_config(page_title='Blueprint take-off AI', page_icon='👁️')
 
 st.markdown('# CAD Blueprint take-off AI')
+
 api_key = st.text_input('OpenAI API Key', '', type='password')
 
 # Get user inputs
-img_input = st.file_uploader('Source Images', accept_multiple_files=True)
+img_input = st.file_uploader('Images', accept_multiple_files=True)
 
 # Send API request
 if st.button('Send'):
@@ -75,14 +64,5 @@ if st.button('Send'):
     if response_msg:
         with st.chat_message('assistant'):
             st.markdown(response_msg)
-            # Assume the entire response_msg is the markdown table
-            df = markdown_table_to_csv(response_msg)
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="Download table as CSV",
-                data=csv,
-                file_name='table.csv',
-                mime='text/csv'
-            )
 
             
